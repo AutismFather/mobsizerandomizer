@@ -14,6 +14,9 @@ public class SpawnEvent implements Listener {
 
     @EventHandler
     public void onSpawnEvent(CreatureSpawnEvent event) {
-        plugin.scaleMob(event.getEntity());
+        // Adjust scale of mob if not in an excluded world
+        if (!plugin.isExcludedWorld(event.getLocation().getWorld().getName())) {
+            plugin.scaleMob(event.getEntity());
+        }
     }
 }

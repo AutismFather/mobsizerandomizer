@@ -7,9 +7,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public final class MobSizeRandomizer extends JavaPlugin {
 
@@ -18,6 +16,7 @@ public final class MobSizeRandomizer extends JavaPlugin {
     private Double defaultMaxSize = 1d;
     private Double defaultMinSize = 0.8d;
     private Map<String, MobScale> mobScaleMap = new HashMap<>();
+    private List<String> excludedWorlds = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -27,11 +26,13 @@ public final class MobSizeRandomizer extends JavaPlugin {
 
         getCommand("mobsizerandomizer").setExecutor(new MainCommands(this));
         getServer().getPluginManager().registerEvents(new SpawnEvent(this), this);
+        getLogger().info("Mob Size Randomizer Loaded.");
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        saveConfig();
     }
 
     /**
@@ -45,6 +46,8 @@ public final class MobSizeRandomizer extends JavaPlugin {
         setDefaultMaxSize(getConfig().getDouble("defaultmax", defaultMaxSize));
         setDefaultMinSize(getConfig().getDouble("defaultmin", defaultMinSize));
         setMobScaleMap();
+
+        setExcludedWorlds();
     }
 
     /**
@@ -56,6 +59,29 @@ public final class MobSizeRandomizer extends JavaPlugin {
             key = key.toUpperCase();
             this.mobScaleMap.put(key, new MobScale(this, key));
         }
+    }
+
+    /**
+     * Set the list of excluded worlds
+     * Worlds in this will not alter mob scale sizes.
+     */
+    private void setExcludedWorlds() {
+        this.excludedWorlds = getConfig().getStringList("excluded-worlds");
+    }
+
+    /**
+     * Check to see if given world is in excluded world list.\
+     *
+     * @param world String
+     * @return Boolean
+     */
+    public Boolean isExcludedWorld(String world) {
+        for (String w : this.excludedWorlds) {
+            if (w.equalsIgnoreCase(world)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -127,6 +153,6 @@ public final class MobSizeRandomizer extends JavaPlugin {
 
         // Set the scale attribute
         entity.getAttribute(Attribute.GENERIC_SCALE).setBaseValue(scale);
-        debug("Scale of " + entityName + " set to " + scale);
+        debug("Scale of " + entityName + " spawned in world '" + entity.getLocation().getWorld().getName() + "' set to " + scale);
     }
 }

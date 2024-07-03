@@ -7,6 +7,12 @@ defaultmax: 1.2
 defaultmin: 0.8
 
 
+# List of worlds to not scale mobs in
+# List all worlds where mobs should not vary in size
+excluded-worlds:
+  - example_world
+
+
 # Mob listings if you want specific mobs to be specific sizes
 # Mobs must be named as they appear in game. For example, Glow Squid is glow_squid
 # To get a list of their entity names, visit https://minecraft.wiki/w/Mob
