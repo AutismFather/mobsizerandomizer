@@ -133,7 +133,7 @@ public final class MobSizeRandomizer extends JavaPlugin {
         Double scale = 1d;
         Double max = getDefaultMaxSize();
         Double min = getDefaultMinSize();
-        String entityName = entity.getName().toUpperCase();
+        String entityName = entity.getName().replaceAll(" ", "_").toUpperCase();
 
         // Get mob scale info from the list/map
         if (mobScaleMap.get(entityName) != null) {
