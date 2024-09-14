@@ -1,5 +1,14 @@
 debug: false
 
+# If you want to prevent specific spawn reasons from changing mob size, set this to true
+enable-spawn-reason-blocklist: false
+# If the blocklist is enabled, any spawn reason included here will be excluded from having mob size randomized
+# See https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html for
+# all possible options.
+spawn-reasons-blocklist:
+  - SPAWNER_EGG
+  - SPAWNER
+
 
 # Default sizes will work for ALL LIVING ENTITIES that spawn
 # If you want certain mobs to not change in size, list them below with max and min set to 1 (their default size)

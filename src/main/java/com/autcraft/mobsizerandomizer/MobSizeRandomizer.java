@@ -2,12 +2,16 @@ package com.autcraft.mobsizerandomizer;
 
 import com.autcraft.mobsizerandomizer.commands.MainCommands;
 import com.autcraft.mobsizerandomizer.events.SpawnEvent;
+import com.google.common.collect.ImmutableSet;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class MobSizeRandomizer extends JavaPlugin {
 
@@ -17,6 +21,9 @@ public final class MobSizeRandomizer extends JavaPlugin {
     private Double defaultMinSize = 0.8d;
     private Map<String, MobScale> mobScaleMap = new HashMap<>();
     private List<String> excludedWorlds = new ArrayList<>();
+    // Spawn reason blocklist
+    private boolean spawnReasonBlocklistEnabled = false;
+    private Set<CreatureSpawnEvent.SpawnReason> blockedSpawnReasons = new HashSet<>();
 
     @Override
     public void onEnable() {
@@ -46,6 +53,8 @@ public final class MobSizeRandomizer extends JavaPlugin {
         setDefaultMaxSize(getConfig().getDouble("defaultmax", defaultMaxSize));
         setDefaultMinSize(getConfig().getDouble("defaultmin", defaultMinSize));
         setMobScaleMap();
+        setSpawnReasonBlocklistEnabled(getConfig().getBoolean("enable-spawn-reason-blocklist", spawnReasonBlocklistEnabled));
+        setBlockedSpawnReasons(getConfig().getStringList("spawn-reasons-blocklist").stream().map(CreatureSpawnEvent.SpawnReason::valueOf).collect(Collectors.toSet()));
 
         setExcludedWorlds();
     }
@@ -120,6 +129,47 @@ public final class MobSizeRandomizer extends JavaPlugin {
     }
 
     /**
+     * Checks to see if certain {@link CreatureSpawnEvent.SpawnReason}s should be excluded from
+     * having size randomized.
+     *
+     * @return {@code true} if certain {@link CreatureSpawnEvent.SpawnReason}s should be excluded from
+     * having size randomized.
+     */
+    public boolean isSpawnReasonBlocklistEnabled() {
+        return spawnReasonBlocklistEnabled;
+    }
+
+    /**
+     * Sets if the {@link CreatureSpawnEvent.SpawnReason} block list should be used or not.
+     *
+     * @param spawnReasonBlocklistEnabled If the {@link CreatureSpawnEvent.SpawnReason} block list should be used or not.
+     */
+    public void setSpawnReasonBlocklistEnabled(boolean spawnReasonBlocklistEnabled) {
+        this.spawnReasonBlocklistEnabled = spawnReasonBlocklistEnabled;
+    }
+
+    /**
+     * Gets an {@link ImmutableSet} of all {@link CreatureSpawnEvent.SpawnReason}s that are excluded from
+     * having their size randomized.
+     *
+     * @return An {@link ImmutableSet} of all {@link CreatureSpawnEvent.SpawnReason}s that are excluded from
+     * having their size randomized.
+     */
+    @NotNull
+    public Set<CreatureSpawnEvent.SpawnReason> getBlockedSpawnReasons() {
+        return ImmutableSet.copyOf(blockedSpawnReasons);
+    }
+
+    /**
+     * Sets the {@link CreatureSpawnEvent.SpawnReason}s that are excluded from having their size randomized.
+     *
+     * @param blockedSpawnReasons The {@link CreatureSpawnEvent.SpawnReason}s that are excluded from having their size randomized.
+     */
+    public void setBlockedSpawnReasons(@NotNull Set<CreatureSpawnEvent.SpawnReason> blockedSpawnReasons) {
+        this.blockedSpawnReasons = blockedSpawnReasons;
+    }
+
+    /**
      * Scale the mob according to data from the config.yml
      *
      * @param entity LivingEntity
@@ -147,7 +197,7 @@ public final class MobSizeRandomizer extends JavaPlugin {
 
         // Get random value to scale
         // If the % is found to be 0, then keep scale at 1.
-        if (max > min ) {
+        if (max > min) {
             scale = rand.nextDouble(min, max);
         }
 
