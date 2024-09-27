@@ -9,6 +9,8 @@ spawn-reasons-blocklist:
   - SPAWNER_EGG
   - SPAWNER
 
+enable-chunkloadeffected: true
+
 
 # Default sizes will work for ALL LIVING ENTITIES that spawn
 # If you want certain mobs to not change in size, list them below with max and min set to 1 (their default size)
@@ -22,17 +24,24 @@ excluded-worlds:
   - example_world
 
 
-# Mob listings if you want specific mobs to be specific sizes
-# Mobs must be named as they appear in game. For example, Glow Squid is glow_squid
-# To get a list of their entity names, visit https://minecraft.wiki/w/Mob
-# Numbers act as percentages where 1 = default size, and 1.5 is 1 and a half times the size, and .8 is 80% the normal size
+  # Mob listings if you want specific mobs to be specific sizes
+  # Mobs must be named as they appear in game. For example, Glow Squid is GLOW_SQUID
+  # To get a list of their entity names, visit https://minecraft.wiki/w/Mob
+  # Numbers act as percentages where 1 = default size, and 1.5 is 1 and a half times the size, and .8 is 80% the normal size
+  # distribution are types of distribution
+  # - NORMAL            | https://en.wikipedia.org/wiki/Normal_distribution
+  # - LEFT_EXPONENTIAL  | https://en.wikipedia.org/wiki/Exponential_distribution
+  # - UNIFORM           | https://en.wikipedia.org/wiki/Continuous_uniform_distribution
 mobs:
-  wither:
+  WITHER:
     max: 1
     min: 1
-  cow:
+    distribution: NORMAL
+  COW:
     max: 1.2
     min: 0.7
-  pig:
+    distribution: LEFT_EXPONENTIAL
+  PIG:
     max: 1.3
     min: 0.8
+    distribution: UNIFORM
