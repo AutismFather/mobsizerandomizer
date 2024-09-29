@@ -4,6 +4,7 @@ import com.autcraft.mobsizerandomizer.commands.MainCommands;
 import com.autcraft.mobsizerandomizer.events.SpawnEvent;
 import com.google.common.collect.ImmutableSet;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -80,7 +81,9 @@ public final class MobSizeRandomizer extends JavaPlugin {
     private void setMobScaleMap(FileConfiguration config) {
         Map<String, MobConfig> mobConfigs = new HashMap<>();
 
-        if (config.isConfigurationSection("mobs")) {
+        // Adds safety avoiding a nullpointer exception if mobs[] is empty in the config.yml file
+        ConfigurationSection mobsSection = getConfig().getConfigurationSection("mobs");
+        if (mobsSection != null) {
             for (String mobName : config.getConfigurationSection("mobs").getKeys(false)) {
                 double min = config.getDouble("mobs." + mobName + ".min", 1.0); // Default to 1.0 if not found
                 double max = config.getDouble("mobs." + mobName + ".max", 1.0); // Default to 1.0 if not found
@@ -94,6 +97,8 @@ public final class MobSizeRandomizer extends JavaPlugin {
 
             }
             System.out.print("MOBCONFIGS" + mobConfigs.toString());
+        } else {
+            getLogger().warning("Mobs section missing or empty in config.yml.");
         }
 
         // Optionally store mobConfigs in a field if you need to access it later
