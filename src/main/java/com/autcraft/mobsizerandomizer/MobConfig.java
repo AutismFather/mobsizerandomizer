@@ -1,5 +1,10 @@
 package com.autcraft.mobsizerandomizer;
 
+/**
+ * MOB-Config for each mob
+ * with values as min and max size
+ * and its distribution type
+ */
 public class MobConfig {
     private double min;
     private double max;

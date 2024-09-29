@@ -9,6 +9,7 @@ spawn-reasons-blocklist:
   - SPAWNER_EGG
   - SPAWNER
 
+# Enables Sizing of mobs inside newly loaded chunck (on not previously loaded chunks)
 enable-chunkloadeffected: true
 
 
@@ -28,9 +29,10 @@ excluded-worlds:
   # Mobs must be named as they appear in game. For example, Glow Squid is GLOW_SQUID
   # To get a list of their entity names, visit https://minecraft.wiki/w/Mob
   # Numbers act as percentages where 1 = default size, and 1.5 is 1 and a half times the size, and .8 is 80% the normal size
-  # distribution are types of distribution
+  # Distribution are types of distribution
   # - NORMAL            | https://en.wikipedia.org/wiki/Normal_distribution
   # - LEFT_EXPONENTIAL  | https://en.wikipedia.org/wiki/Exponential_distribution
+  # - RIGHT_EXPONENTIAL  | https://en.wikipedia.org/wiki/Exponential_distribution
   # - UNIFORM           | https://en.wikipedia.org/wiki/Continuous_uniform_distribution
 mobs:
   WITHER:
@@ -42,6 +44,10 @@ mobs:
     min: 0.7
     distribution: LEFT_EXPONENTIAL
   PIG:
+    max: 1.3
+    min: 0.8
+    distribution: UNIFORM
+  SHEEP:
     max: 1.3
     min: 0.8
     distribution: UNIFORM

@@ -28,9 +28,6 @@ public final class MobSizeRandomizer extends JavaPlugin {
 
     private final Random random = new Random();
 
-
-
-
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -103,6 +100,13 @@ public final class MobSizeRandomizer extends JavaPlugin {
         this.mobConfigs = mobConfigs;
     }
 
+    /**
+     * Getting the random size depending on the Mob, Mob-Config values
+     * @param min   minimum size
+     * @param max   maximum size
+     * @param distributionType Type pf distribution, See DistributionType enum
+     * @return  Return Scale value
+     */
     public double getRandomSize(double min, double max, String distributionType) {
         DistributionType dist = DistributionType.fromString(distributionType);
         switch (dist) {
@@ -110,6 +114,8 @@ public final class MobSizeRandomizer extends JavaPlugin {
                 return getNormalRandom(min, max);
             case LEFT_EXPONENTIAL:
                 return getLeftExponentialRandom(min, max);
+            case RIGHT_EXPONENTIAL:
+                return getRightExponentialRandom(min, max);
             default:
                 return getUniformRandom(min, max);
         }
@@ -120,7 +126,14 @@ public final class MobSizeRandomizer extends JavaPlugin {
         return min + (max - min) * random.nextDouble();
     }
 
-    // Normal distribution with mean = (max + min) / 2, and standard deviation
+    //
+    /** Normal distribution with mean = (max + min) / 2, and standard deviation
+     * TODO Suggest making this more customizable,
+     * by editing stdDev/spread and mean/midpoint.
+     * @param min minimum value
+     * @param max maximum value
+     * @return
+     */
     private double getNormalRandom(double min, double max) {
         double mean = (max + min) / 2;
         double stdDev = (max - min) / 6; // 99.7% of values within min-max
@@ -131,8 +144,31 @@ public final class MobSizeRandomizer extends JavaPlugin {
         return value;
     }
 
-    // Left-skewed exponential distribution
+    /** Left-skewed exponential distribution
+     * TODO Suggest making this more customizable,
+     * By editing lambda
+     * @param min, minimum value
+     * @param max maximum value
+     * @return
+     */
     private double getLeftExponentialRandom(double min, double max) {
+        double lambda = 1.0; // Adjust lambda for steeper curves
+        double value;
+        do {
+            value = max - Math.log(1 - random.nextDouble()) / lambda;  // Reflect the distribution
+        } while (value < min || value > max); // Clamp within range
+        return value;
+    }
+
+    /** Right-skewed exponential distribution
+     * TODO Suggest making this more customizable,
+     * By editing lambda
+     * @param min, minimum value
+     * @param max maximum value
+     * @return
+     */
+    // Right-skewed exponential distribution
+    private double getRightExponentialRandom(double min, double max) {
         double lambda = 1.0; // Adjust lambda for steeper curves
         double value;
         do {

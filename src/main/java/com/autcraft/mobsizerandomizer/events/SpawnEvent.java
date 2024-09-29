@@ -26,6 +26,16 @@ public class SpawnEvent implements Listener {
         }
     }
 
+    /**
+     * Handles the chunk load event to modify mob sizes for entities in the loaded chunk
+     * if scaling is enabled in the plugin configuration.
+     *
+     * This method is triggered whenever a chunk is loaded. It retrieves all the entities
+     * in the loaded chunk and checks whether the plugin is configured to affect mob sizes
+     * upon chunk load. If enabled, it scales the size of any living entity present in the chunk.
+     *
+     * @param event The ChunkLoadEvent triggered when a chunk is loaded.
+     */
     @EventHandler
     public void onChunkLoadEvent(@NotNull ChunkLoadEvent event) {
         Entity[] entitiesarray = event.getChunk().getEntities();
