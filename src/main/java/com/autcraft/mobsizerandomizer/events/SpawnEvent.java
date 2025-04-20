@@ -16,7 +16,7 @@ public class SpawnEvent implements Listener {
     @EventHandler
     public void onSpawnEvent(CreatureSpawnEvent event) {
         // Adjust scale of mob if not in an excluded world
-        if (!plugin.isExcludedWorld(event.getLocation().getWorld().getName()) && canSpawnReasonBeScaled(event)) {
+        if (!plugin.isExcludedWorld(event.getLocation().getWorld().getName()) && canSpawnReasonBeScaled(event) && canSpawnBeScaledInLands(event)) {
             plugin.scaleMob(event.getEntity());
         }
     }
@@ -33,5 +33,16 @@ public class SpawnEvent implements Listener {
             return !plugin.getBlockedSpawnReasons().contains(event.getSpawnReason());
         }
         return true;
+    }
+
+    /**
+     * Checks to see if the provided {@link CreatureSpawnEvent} can have the mob scale adjusted
+     * based on if the spawn happened in a {@link me.angeschossen.lands.api.land.Land} or not.
+     *
+     * @param event The {@link CreatureSpawnEvent} to check.
+     * @return {@code true} if the provided {@link CreatureSpawnEvent} can have the mob scale adjusted.
+     */
+    private boolean canSpawnBeScaledInLands(@NotNull CreatureSpawnEvent event) {
+        return plugin.getLandsHook().map(landsHook -> landsHook.doesLandAllowSizeRandomization(event.getLocation())).orElse(true);
     }
 }

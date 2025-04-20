@@ -2,13 +2,16 @@ package com.autcraft.mobsizerandomizer;
 
 import com.autcraft.mobsizerandomizer.commands.MainCommands;
 import com.autcraft.mobsizerandomizer.events.SpawnEvent;
+import com.autcraft.mobsizerandomizer.external.LandsHook;
 import com.google.common.collect.ImmutableSet;
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,6 +27,10 @@ public final class MobSizeRandomizer extends JavaPlugin {
     // Spawn reason blocklist
     private boolean spawnReasonBlocklistEnabled = false;
     private Set<CreatureSpawnEvent.SpawnReason> blockedSpawnReasons = new HashSet<>();
+
+    // Lands integration
+    @Nullable
+    private LandsHook landsHook;
 
     @Override
     public void onEnable() {
@@ -42,6 +49,11 @@ public final class MobSizeRandomizer extends JavaPlugin {
         saveConfig();
     }
 
+    @Override
+    public void onLoad() {
+        setupLoadHooks();
+    }
+
     /**
      * Load values from config.yml
      */
@@ -57,6 +69,13 @@ public final class MobSizeRandomizer extends JavaPlugin {
         setBlockedSpawnReasons(getConfig().getStringList("spawn-reasons-blocklist").stream().map(CreatureSpawnEvent.SpawnReason::valueOf).collect(Collectors.toSet()));
 
         setExcludedWorlds();
+    }
+
+    private void setupLoadHooks() {
+        if (Bukkit.getPluginManager().getPlugin("Lands") != null) {
+            landsHook = new LandsHook(this);
+            getLogger().info("Lands Integration loaded.");
+        }
     }
 
     /**
@@ -167,6 +186,18 @@ public final class MobSizeRandomizer extends JavaPlugin {
      */
     public void setBlockedSpawnReasons(@NotNull Set<CreatureSpawnEvent.SpawnReason> blockedSpawnReasons) {
         this.blockedSpawnReasons = blockedSpawnReasons;
+    }
+
+    /**
+     * Gets the {@link LandsHook} MobSizeRandomizer uses to support Lands.
+     *
+     * @return An {@link Optional} containing the {@link LandsHook} MobSizeRandomizer uses to support
+     * <a href="https://www.spigotmc.org/resources/lands-%E2%AD%95-land-claim-plugin-%E2%9C%85-grief-prevention-protection-gui-management-nations-wars-1-21-support.53313/">Lands</a>
+     * if Lands is running.
+     */
+    @NotNull
+    public Optional<LandsHook> getLandsHook() {
+        return Optional.ofNullable(landsHook);
     }
 
     /**

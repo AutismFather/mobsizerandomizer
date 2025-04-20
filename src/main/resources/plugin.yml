@@ -2,7 +2,8 @@ name: MobSizeRandomizer
 version: '${version}'
 main: com.autcraft.mobsizerandomizer.MobSizeRandomizer
 api-version: '1.20'
-load: STARTUP
+load: POSTWORLD # Needs to be post world to support lands
+softdepend: [Lands]
 commands:
   mobsizerandomizer:
     description: Main Command
